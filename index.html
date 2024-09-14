@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <title>Cubo+ Technical Test</title>
+    <script src="https://mempool.space/mempool.js"></script>
+    <script>
+      const init = async () => {
+        const { bitcoin: { addresses } } = mempoolJS({
+          hostname: 'mempool.space'
+        });
+
+        const address = '32ixEdVJWo3kmvJGMTZq5jAQVZZeuwnqzo';
+        const myAddress = await addresses.getAddress({ address });
+
+        document.getElementById("result").textContent = JSON.stringify(myAddress, undefined, 2);
+      };
+      init();
+    </script>
+  </head>
+  <body>
+    <pre id="result"></pre>
+  </body>
+</html>
