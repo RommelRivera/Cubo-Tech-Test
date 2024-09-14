@@ -1,1 +1,3 @@
-# Cubo-Tech-Test
+### Cubo-Technical Test
+[video]
+[solution]
