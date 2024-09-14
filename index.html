@@ -11,12 +11,12 @@
         const address = '32ixEdVJWo3kmvJGMTZq5jAQVZZeuwnqzo';
         const myAddress = await addresses.getAddress({ address });
 
-        document.getElementById("result").textContent = JSON.stringify(myAddress, undefined, 2);
+        document.getElementById("address").textContent = JSON.stringify(myAddress, undefined, 2);
       };
       init();
     </script>
   </head>
   <body>
-    <pre id="result"></pre>
+    <pre id="address"></pre>
   </body>
 </html>
