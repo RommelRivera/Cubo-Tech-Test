@@ -24,6 +24,7 @@
         let both = false;
         let last_transaction = { txid: 0 };
         let transactions = [];
+        let test = '';
 
         //do {
           //if (last_transaction.txid == 0) {
@@ -34,8 +35,9 @@
 
           for (const transaction in transactions) {
             last_transaction = transaction;
+            test = transaction.txid;
 
-            if (!transaction.status.confirmed) {
+            /*if (!transaction.status.confirmed) {
               continue;
             } else {
               if (transaction.status.block_time < month_from_current) {
@@ -57,11 +59,11 @@
                   week_value += both ? output.value : 0;
                 }
               }
-            }
+            }*/
           }
         //} while (last_transaction.status.block_time > week_from_current);
 
-        document.getElementById("result").textContent = "On-chain balance: " + chain_balance + " BTC\nMempool balance: " + mempool_balance + " BTC\nBalance variation in the last 30 days (" + new Date(month_from_current) + " - " + current_date + "): " + month_value + " BTC\nBalance variation in the last 7 days (" + new Date(week_from_current) + " - " + current_date + "): " + week_value + " BTC";
+        document.getElementById("result").textContent = test;//"On-chain balance: " + chain_balance + " BTC\nMempool balance: " + mempool_balance + " BTC\nBalance variation in the last 30 days (" + new Date(month_from_current) + " - " + current_date + "): " + month_value + " BTC\nBalance variation in the last 7 days (" + new Date(week_from_current) + " - " + current_date + "): " + week_value + " BTC";
       };
       init();
     </script>
