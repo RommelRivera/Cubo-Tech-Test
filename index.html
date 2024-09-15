@@ -9,19 +9,59 @@
         });
 
         const address = '32ixEdVJWo3kmvJGMTZq5jAQVZZeuwnqzo';
-        const myAddress = await addresses.getAddressTxs({ address });
+        const myAddress = await addresses.getAddress({ address });
 
-        function SAT(value) {
-          return value / 100000000;
-        };
+        const chain_balance = (myAddress.chain_stats.funded_txo_sum - myAddress.chain_stats.spent_txo_sum) / 100000000;
+        const mempool_balance = (myAddress.mempool_stats.funded_txo_sum - myAddress.mempool_stats.spent_txo_sum) / 100000000;
 
-        //const chain_balance = SAT(myAddress.chain_stats.funded_txo_sum - myAddress.chain_stats.spent_txo_sum);
-        //const mempool_balance = SAT(myAddress.mempool_stats.funded_txo_sum - myAddress.mempool_stats.spent_txo_sum);
-        // Current date
-        // 30 days prior to date
-        // 7 days prior to date
+        const current_date = new Date(new Date().setHours(0,0,0,0));
+        const month_from_current = new Date(new Date().setDate(current_date.getDate() - 30)).setHours(0,0,0,0);
+        const week_from_current = new Date(new Date().setDate(current_date.getDate() - 7)).setHours(0,0,0,0);
 
-        document.getElementById("result").textContent = JSON.stringify(myAddress, undefined, 2);//"On-chain balance: " + chain_balance + " BTC\nMempool balance: " + mempool_balance + " BTC";
+        let month_value = chain_balance;
+        let weeek_value = chain_balance;
+
+        let both = false;
+        let last_transaction = { txid: 0 };
+        let transactions = [];
+
+        do {
+          if (last_transaction.txid == 0) {
+            transactions = await addresses.getAddressTxs({ address });
+          } else {
+            transactions = await addresses.getAddressTxs({ address, after_txid: last_transaction.txid });
+          }
+
+          for (const transaction in transactions) {
+            last_transaction = transaction;
+
+            if (!transaction.status.confirmed) {
+              continue;
+            } else {
+              if (transaction.status.block_time < month_from_current) {
+                continue;
+              } else {
+                both = transaction.status.block_time >= week_from_current;
+              }
+
+              for (const input in transaction.vin) {
+                if (input.prevout.scriptpubkey_address == address) {
+                  month_value -= input.prevout.value;
+                  weeek_value -= both ? input.prevout.value : 0;
+                }
+              }
+
+              for (const output in transaction.vout) {
+                if (output.scriptpubkey_address == address) {
+                  month_value += output.value;
+                  week_value += both ? output.value : 0;
+                }
+              }
+            }
+          }
+        } while (last_transaction.status.block_time > week_from_current);
+
+        document.getElementById("result").textContent = "On-chain balance: " + chain_balance + " BTC\nMempool balance: " + mempool_balance + " BTC\nBalance variation in the last 30 days (" + month_from_current + " - " + current_date + "): " + month_value + " BTC";
       };
       init();
     </script>
