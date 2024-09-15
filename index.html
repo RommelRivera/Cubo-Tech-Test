@@ -9,7 +9,7 @@
         });
 
         const address = '32ixEdVJWo3kmvJGMTZq5jAQVZZeuwnqzo';
-        const myAddress = await addresses.getAddressTxs({ address: address, after_txid: '45dd929a6d9f49a04713eb392125096537e61cab9b7b8ba7f7d3745eaf7f9640' });
+        const myAddress = await addresses.getAddressTxs({ address: address, last_seen_txid: '45dd929a6d9f49a04713eb392125096537e61cab9b7b8ba7f7d3745eaf7f9640' });
 
         function SAT(value) {
           return value / 100000000;
