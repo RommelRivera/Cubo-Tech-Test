@@ -8,62 +8,60 @@
           hostname: 'mempool.space'
         });
 
+        let result = "";
+
         const address = '32ixEdVJWo3kmvJGMTZq5jAQVZZeuwnqzo';
         const myAddress = await addresses.getAddress({ address });
 
         const chain_balance = (myAddress.chain_stats.funded_txo_sum - myAddress.chain_stats.spent_txo_sum) / 100000000;
+        result += "On-chain balance: " + chain_balance + " BTC";
+
         const mempool_balance = (myAddress.mempool_stats.funded_txo_sum - myAddress.mempool_stats.spent_txo_sum) / 100000000;
+        result += "\nMempool balance: " + mempool_balance + " BTC";
 
         const current_date = new Date(new Date().setHours(0,0,0,0));
         const month_from_current = new Date(new Date().setDate(current_date.getDate() - 30)).setHours(0,0,0,0);
         const week_from_current = new Date(new Date().setDate(current_date.getDate() - 7)).setHours(0,0,0,0);
 
-        let month_value = chain_balance;
-        let week_value = chain_balance;
+        let month_value = 0;
+        let week_value = 0;
 
         let both = false;
-        let last_transaction = { txid: 0 };
-        let transactions = [];
-        let test = '';
-
-        //do {
-          //if (last_transaction.txid == 0) {
-            transactions = await addresses.getAddressTxs({ address });
-          /*} else {
-            transactions = await addresses.getAddressTxs({ address, after_txid: last_transaction.txid });
-          }*/
-
-          for (const transaction in transactions) {
-            last_transaction = transaction;
-            test = transaction.txid;
-
-            /*if (!transaction.status.confirmed) {
+        let transactions = await addresses.getAddressTxs({ address });
+          
+        for (const transaction of transactions) {
+          last_transaction = transaction;
+          
+          if (!transaction.status.confirmed) {
+            continue;
+          } else {
+            if (transaction.status.block_time * 1000 < month_from_current) {
               continue;
             } else {
-              if (transaction.status.block_time < month_from_current) {
-                continue;
-              } else {
-                both = transaction.status.block_time >= week_from_current;
-              }
+              both = transaction.status.block_time * 1000 >= week_from_current;
+            }
 
-              for (const input in transaction.vin) {
-                if (input.prevout.scriptpubkey_address == address) {
-                  month_value -= input.prevout.value;
-                  weeek_value -= both ? input.prevout.value : 0;
-                }
+            for (const input of transaction.vin) {
+              if (input.prevout.scriptpubkey_address == address) {
+                console.log("sender");
+                month_value -= input.prevout.value;
+                week_value -= both ? input.prevout.value : 0;
               }
+            }
 
-              for (const output in transaction.vout) {
-                if (output.scriptpubkey_address == address) {
-                  month_value += output.value;
-                  week_value += both ? output.value : 0;
-                }
+            for (const output of transaction.vout) {
+              if (output.scriptpubkey_address == address) {
+                month_value += output.value;
+                week_value += both ? output.value : 0;
               }
-            }*/
+            }
           }
-        //} while (last_transaction.status.block_time > week_from_current);
+        }
 
-        document.getElementById("result").textContent = test;//"On-chain balance: " + chain_balance + " BTC\nMempool balance: " + mempool_balance + " BTC\nBalance variation in the last 30 days (" + new Date(month_from_current) + " - " + current_date + "): " + month_value + " BTC\nBalance variation in the last 7 days (" + new Date(week_from_current) + " - " + current_date + "): " + week_value + " BTC";
+        result += "\nBalance variation in the last 30 days (" + new Date(month_from_current) + " - " + current_date + "): " + (month_value / 100000000) + " BTC";
+        result += "\nBalance variation in the last 7 days (" + new Date(week_from_current) + " - " + current_date + "): " + (week_value / 100000000) + " BTC";
+
+        document.getElementById("result").textContent = result;
       };
       init();
     </script>
