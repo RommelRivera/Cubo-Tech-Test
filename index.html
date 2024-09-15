@@ -9,7 +9,7 @@
         });
 
         const address = '32ixEdVJWo3kmvJGMTZq5jAQVZZeuwnqzo';
-        const myAddress = await addresses.getAddressTxs({ address: address });
+        const myAddress = await addresses.getAddressTxs({ address: address, last_seen_txid: '25d65c0c7bbfe96ad92e491547763c4d785e127c01a133c0af5c27e9a8b5247b' });
 
         function SAT(value) {
           return value / 100000000;
