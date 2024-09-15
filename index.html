@@ -25,14 +25,14 @@
         let last_transaction = { txid: 0 };
         let transactions = [];
 
-        do {
-          if (last_transaction.txid == 0) {
+        //do {
+          //if (last_transaction.txid == 0) {
             transactions = await addresses.getAddressTxs({ address });
-          } else {
+          /*} else {
             transactions = await addresses.getAddressTxs({ address, after_txid: last_transaction.txid });
-          }
+          }*/
 
-          for (const transaction in transactions) {
+          /*for (const transaction in transactions) {
             last_transaction = transaction;
 
             if (!transaction.status.confirmed) {
@@ -58,8 +58,8 @@
                 }
               }
             }
-          }
-        } while (last_transaction.status.block_time > week_from_current);
+          }*/
+        //} while (last_transaction.status.block_time > week_from_current);
 
         document.getElementById("result").textContent = "On-chain balance: " + chain_balance + " BTC\nMempool balance: " + mempool_balance + " BTC\nBalance variation in the last 30 days (" + month_from_current + " - " + current_date + "): " + month_value + " BTC";
       };
