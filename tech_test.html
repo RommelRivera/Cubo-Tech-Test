@@ -29,9 +29,7 @@
         let both = false;
         let transactions = await addresses.getAddressTxs({ address });
           
-        for (const transaction of transactions) {
-          last_transaction = transaction;
-          
+        for (const transaction of transactions) {          
           if (!transaction.status.confirmed) {
             continue;
           } else {
@@ -43,7 +41,6 @@
 
             for (const input of transaction.vin) {
               if (input.prevout.scriptpubkey_address == address) {
-                console.log("sender");
                 month_value -= input.prevout.value;
                 week_value -= both ? input.prevout.value : 0;
               }
