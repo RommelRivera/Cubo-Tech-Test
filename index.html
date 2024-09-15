@@ -9,11 +9,19 @@
         });
 
         const address = '32ixEdVJWo3kmvJGMTZq5jAQVZZeuwnqzo';
-        const myAddress = await addresses.getAddress({ address });
+        const myAddress = await addresses.getAddress({ address: address, after_txid: '27645a4001a953104868c14bc30e9a3bb11f5c4bad37294e8e9a426dd74b38d2', });
 
-        const obj = JSON.parse(myAddress)
+        function SAT(value) {
+          return value / 100000000;
+        };
 
-        document.getElementById("result").textContent = JSON.stringify(obj.address, undefined, 2);
+        const chain_balance = SAT(myAddress.chain_stats.funded_txo_sum - myAddress.chain_stats.spent_txo_sum);
+        const mempool_balance = SAT(myAddress.mempool_stats.funded_txo_sum - myAddress.mempool_stats.spent_txo_sum);
+        // Current date
+        // 30 days prior to date
+        // 7 days prior to date
+
+        document.getElementById("result").textContent = JSON.stringify(myAddress, undefined, 2);//"On-chain balance: " + chain_balance + " BTC\nMempool balance: " + mempool_balance + " BTC";
       };
       init();
     </script>
